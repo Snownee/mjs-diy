@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        /* 容器样式：半透明、金属质感渐变、深色描边 */
+        .skill-card {
+            width: 600px;
+            padding: 10px 20px;
+            /* 增加了透明度：从上往下深灰到中灰，rgba(r,g,b,0.7) */
+            background: linear-gradient(to bottom, rgba(74, 74, 74, 0.7) 0%, rgba(117, 117, 117, 0.7) 30%, rgba(109, 109, 109, 0.7) 100%);
+            border: 2px solid #999;
+            border-radius: 4px;
+            /* 外部投影，增加浮起感 */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            font-family: "Microsoft YaHei", "Heiti SC", sans-serif;
+            /* 确保在中文字体下正常显示 */
+        }
+
+        /* 标题栏布局 */
+        .skill-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            /* 标题后的黑色渐变也设为半透明 */
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+            padding: 2px 5px;
+            border-radius: 2px;
+        }
+
+        /* 左侧金色圆点 */
+        .dot {
+            width: 10px;
+            height: 10px;
+            /* 保持金色径向渐变 */
+            background: radial-gradient(circle, #ffe082 20%, #ffb300 100%);
+            border-radius: 50%;
+            margin-right: 12px;
+            /* 保持金色阴影 */
+            box-shadow: 0 0 8px #ffb300;
+            border: 1px solid #000;
+        }
+
+        /* 技能标题：上橙下黄渐变文字、黑色描边 */
+        .skill-title {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 4px;
+
+            /* 使用渐变色填充文字 */
+            background: linear-gradient(to bottom, #ff9800 0%, #ffeb3b 100%);
+            /* 上橙下黄 */
+            background-clip: text;
+            -webkit-background-clip: text;
+            /* 关键属性：让渐变色仅在文字区域内 */
+            -webkit-text-fill-color: transparent;
+            /* 关键属性：让文字本身透明，露出渐变底色 */
+
+            /* 描边粗细和颜色 */
+            text-shadow: 
+                -0.5px -0.5px 0 #000,  
+                0.5px -0.5px 0 #000,
+                -0.5px  0.5px 0 #000,
+                0.5px  0.5px 0 #000;
+        }
+
+        /* 描述文字样式 (保持不变) */
+        .skill-description {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.4;
+            color: #e0e0e0;
+            /* 添加微弱的投影，确保描述文字清晰 */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-weight: 300;
+        }
+    </style>
+    <div class="skill-card">
+        <div class="skill-header">
+            <span class="dot"></span>
+            <h2 class="skill-title">绝好善舞</h2>
+        </div>
+        <p class="skill-description">
+            当你打出牌时，你可以弃置1张牌，然后摸1张牌。当你打出最后1张手牌时，摸1张牌。
+        </p>
+    </div>
+</body>
+
+</html>
