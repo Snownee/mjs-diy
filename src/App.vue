@@ -87,7 +87,7 @@
           </el-form>
           <template #footer>
             <el-space>
-              <el-link href="#" target="_blank">问题反馈</el-link>
+              <el-link href="https://www.taptap.cn/moment/783350437376950702" target="_blank">问题反馈</el-link>
               -
               <el-link href="https://www.taptap.cn/user/757224223" target="_blank">制作器作者：Snownee</el-link>
               -
@@ -221,13 +221,13 @@ const defaultForm = {
     {
       id: -1,
       key: '图穷匕见',
-      value: '<span class=yellow>出牌阶段限1次</span>，当你失去最后手牌时，添加1张&ldquo;徐夫人匕首&rdquo;和1张杀到你的手牌。',
+      value: '<span.yellow>出牌阶段限1次</span>，当你失去最后手牌时，添加1张&ldquo;徐夫人匕首&rdquo;和1张杀到你的手牌。',
       isChild: false,
     },
     {
       id: -2,
       key: '把袖而揕',
-      value: '<span class=yellow>出牌阶段限1次</span>，你可以交给一名其他角色1张手牌，令你与其的距离变为1，并且你对其造成的下一次伤害+1，直到回合结束。',
+      value: '<span.yellow>出牌阶段限1次</span>，你可以交给一名其他角色1张手牌，令你与其的距离变为1，并且你对其造成的下一次伤害+1，直到回合结束。',
       isChild: false,
     },
     {
@@ -314,16 +314,16 @@ const copy = v => {
 }
 
 const processText = (s) => {
-  s = s.replace('\n', '<br/>')
-  s = s.replace(`<span.`, `<span class=`)
+  s = s.replaceAll('\n', '<br/>')
+  s = s.replaceAll(`<span.`, `<span class=`)
   for (const [k, v] of Object.entries({
     '♠': 'spades',
     '♣': 'clubs',
     '♥': 'hearts',
     '♦': 'diams'
   })) {
-    s = s.replace(k, `<span class="${v}">${k}</span0>`)
-    s = s.replace(`&${v};`, `<span class="${v}">${k}</span>`)
+    s = s.replaceAll(k, `<span class="${v}">${k}</span0>`)
+    s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`)
   }
   return s
 }
