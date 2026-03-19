@@ -1,5 +1,13 @@
 <template>
   <div class="app-wrapper">
+    <el-dialog v-model="dialogVisible" title="未找到字体" width="500">
+      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">确认</el-button>
+        </div>
+      </template>
+    </el-dialog>
     <el-row justify="space-evenly" class="main-row">
       <el-col :xs="24" :sm="12">
         <el-card class="form-section">
@@ -28,11 +36,17 @@
               </el-button-group>
             </el-form-item>
 
-            <el-form-item label="姓名颜色" class="name-color">
-              <span>文字颜色</span>
-              <el-color-picker v-model="form.nameColor" show-alpha />
-              <span>阴影颜色</span>
-              <el-color-picker v-model="form.nameShadow" show-alpha />
+            <el-form-item label="姓名样式" class="name-color">
+              <div>
+                <span>文字颜色</span>
+                <el-color-picker v-model="form.nameColor" show-alpha />
+                <span>阴影颜色</span>
+                <el-color-picker v-model="form.nameShadow" show-alpha />
+              </div>
+              <div>
+                <span>字符间距</span>
+                <el-input-number v-model="form.nameSpacing" :precision="2" :step="0.1" />
+              </div>
             </el-form-item>
 
             <el-form-item v-for="(skill, index) in form.skills" :key="skill.id" :label="'技能' + (index + 1)"
@@ -143,7 +157,7 @@ import domtoimage from 'dom-to-image';
 import ImageCropper from './components/ImageCropper.vue';
 import jingke from '@/assets/ui_s1_yuanhua_jingke.jpg'
 import yan from '@/assets/yan.png'
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const factions = [
   // {
@@ -255,12 +269,14 @@ const defaultForm = {
   topRightText: '设计师：',
   nameColor: 'white',
   nameShadow: 'black',
+  nameSpacing: 0
 }
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
   return {
     color: form.nameColor,
-    'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`
+    'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`,
+    'letter-spacing': `${form.nameSpacing - 2}cqw`
   };
 });
 const images = reactive({
@@ -269,6 +285,8 @@ const images = reactive({
   factionImage: yan,
 })
 
+const dialogVisible = ref(false)
+
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
   const savedData = localStorage.getItem('card_data');
@@ -276,6 +294,31 @@ onMounted(() => {
     // 将字符串转回对象并赋值
     Object.assign(form, JSON.parse(savedData));
   }
+
+  const checkFonts = (fonts) => {
+    for (const font in fonts) {
+      if (document.fonts.check(`12px "${fonts[font]}"`)) {
+        console.log(`Found font: ${fonts[font]}`);
+        return true
+      }
+    }
+    return false
+  }
+
+  dialogVisible.value =
+    !checkFonts([
+      "Kaiti SC",
+      "STKaiti",
+      "BiauKai",
+      "楷体",
+      "KaiTi"]) ||
+    !checkFonts([
+      "Source Han Sans SC",
+      "Source Han Sans CN",
+      "PingFang SC",
+      "Microsoft YaHei",
+      "Noto Sans CJK SC",
+      "WenQuanYi Micro Hei"])
 });
 
 // 2. 数据变化时：实时写入本地
@@ -353,8 +396,8 @@ const processText = (s) => {
     '♦': 'diams',
     '☯': 'yinyang'
   })) {
-    s = s.replaceAll(k, `<span class="${v}"></span>`)
-    s = s.replaceAll(`&${v};`, `<span class="${v}"></span>`)
+    s = s.replaceAll(k, `<span class="${v}">${k}</span>`)
+    s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`)
   }
   return s
 }
@@ -364,7 +407,7 @@ const processText = (s) => {
 .card-preview {
   aspect-ratio: 69 / 94;
   position: relative;
-  font-family: "楷体", "Microsoft YaHei", sans-serif;
+  font-family: "Kaiti SC", "STKaiti", "BiauKai", "楷体", "KaiTi", serif;
   container-type: inline-size;
 }
 
@@ -391,16 +434,10 @@ const processText = (s) => {
   出血：3
   */
   padding: calc(3 / 94 * 100%) calc(3 / 69 * 100%);
-  box-sizing: border-box;
-  background-size: contain;
-  background-origin: content-box;
-  background-repeat: no-repeat;
 }
 
+#card-bg,
 #card-fg {
-  /*
-  尺寸：69 / 94
-  */
   box-sizing: border-box;
   background-size: contain;
   background-origin: content-box;
@@ -417,6 +454,7 @@ const processText = (s) => {
   font-size: 7cqw;
   font-weight: normal;
   writing-mode: vertical-lr;
+  letter-spacing: -2cqw;
   white-space: nowrap;
   text-align: center;
 }
@@ -554,7 +592,17 @@ const processText = (s) => {
   color: #e0e0e0;
   text-shadow: 0.1cqw 0.1cqw 0.2cqw rgba(0, 0, 0, 0.8);
   font-weight: 300;
-  font-family: "Microsoft YaHei", sans-serif;
+  font-family:
+    /* 1. 优先调用本地思源黑体 */
+    "Source Han Sans SC", "Source Han Sans CN",
+    /* 2. macOS / iOS 替代 */
+    "PingFang SC",
+    /* 3. Windows 替代 */
+    "Microsoft YaHei",
+    /* 4. Linux / Android 替代 */
+    "Noto Sans CJK SC", "WenQuanYi Micro Hei",
+    /* 5. 兜底方案 */
+    sans-serif;
   font-weight: normal;
 }
 
@@ -580,7 +628,17 @@ const processText = (s) => {
   color: #b2dfdb;
   text-shadow: 0.1cqw 0.1cqw 0.2cqw rgba(0, 0, 0, 0.8);
   font-weight: bold;
-  font-family: "Microsoft YaHei", sans-serif;
+  font-family:
+    /* 1. 优先调用本地思源黑体 */
+    "Source Han Sans SC", "Source Han Sans CN",
+    /* 2. macOS / iOS 替代 */
+    "PingFang SC",
+    /* 3. Windows 替代 */
+    "Microsoft YaHei",
+    /* 4. Linux / Android 替代 */
+    "Noto Sans CJK SC", "WenQuanYi Micro Hei",
+    /* 5. 兜底方案 */
+    sans-serif;
   position: absolute;
   top: 5.7cqw;
   white-space: nowrap;
