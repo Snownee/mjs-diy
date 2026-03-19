@@ -80,7 +80,7 @@
               <ImageCropper type="primary" v-model:image="images.bgImage" :aspectRatio="[63, 88]">
                 上传背景图
               </ImageCropper>
-              <ImageCropper type="primary" v-model:image="images.fgImage" :aspectRatio="[69, 94]">
+              <ImageCropper v-model:image="images.fgImage" :aspectRatio="[69, 94]">
                 上传前景图
               </ImageCropper>
               <el-button @click="images.fgImage = ''">清除前景图</el-button>
