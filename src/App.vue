@@ -59,11 +59,13 @@
                     '♣': '♣',
                     '♥': '♥',
                     '♦': '♦',
+                    '☯': '☯',
                     '粗体': '<b>粗体</b>',
                     '斜体': '<i>斜体</i>',
                     '橙色': '<span.orange>橙色</span>',
                     '绿色': '<span.green>绿色</span>',
-                    '黄色': '<span.yellow>黄色</span>'
+                    '黄色': '<span.yellow>黄色</span>',
+                    '灰色': '<span.gray>灰色</span>'
                   }">{{ k }}</el-button>
                 </el-button-group>
               </el-popover>
@@ -336,10 +338,6 @@ const useFaction = (faction) => {
   }
 }
 
-const uploadFactionImage = () => {
-
-}
-
 const copy = v => {
   navigator.clipboard.writeText(v)
   ElMessage.success('已复制')
@@ -352,10 +350,11 @@ const processText = (s) => {
     '♠': 'spades',
     '♣': 'clubs',
     '♥': 'hearts',
-    '♦': 'diams'
+    '♦': 'diams',
+    '☯': 'yinyang'
   })) {
-    s = s.replaceAll(k, `<span class="${v}">${k}</span0>`)
-    s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`)
+    s = s.replaceAll(k, `<span class="${v}"></span>`)
+    s = s.replaceAll(`&${v};`, `<span class="${v}"></span>`)
   }
   return s
 }
@@ -438,8 +437,9 @@ const processText = (s) => {
 }
 
 #max-cards {
+  position: absolute;
   left: calc(8.2 / 69 * 100%);
-  top: calc(28.3 / 94 * 100%);
+  top: calc(40 / 94 * 100%);
   width: calc(4 / 69 * 100%);
   color: #b2dfdb;
   font-size: 7cqw;
