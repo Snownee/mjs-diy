@@ -1,5 +1,5 @@
 <template>
-  <el-button type="primary" class="cropper-component">
+  <el-button class="cropper-component">
     <div @click="triggerUpload">
       <slot>
         <el-button type="primary">上传图片</el-button>

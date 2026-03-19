@@ -21,10 +21,18 @@
 
             <el-form-item label="势力">
               <el-button-group>
-                <el-button v-for="faction in factions" @click="form.faction = faction.key">{{ faction.value
-                }}</el-button>
-                <!-- <el-button @click="uploadFactionImage">上传图片</el-button> -->
+                <el-button v-for="faction in factions" @click="useFaction(faction)">{{ faction.value }}</el-button>
+                <ImageCropper v-model:image="images.factionImage" :aspectRatio="[69, 94]">
+                  上传图片
+                </ImageCropper>
               </el-button-group>
+            </el-form-item>
+
+            <el-form-item label="姓名颜色" class="name-color">
+              <span>文字颜色</span>
+              <el-color-picker v-model="form.nameColor" show-alpha />
+              <span>阴影颜色</span>
+              <el-color-picker v-model="form.nameShadow" show-alpha />
             </el-form-item>
 
             <el-form-item v-for="(skill, index) in form.skills" :key="skill.id" :label="'技能' + (index + 1)"
@@ -67,10 +75,10 @@
             </el-form-item>
 
             <el-form-item label="图片">
-              <ImageCropper v-model:image="images.bgImage" :aspectRatio="[63, 88]">
+              <ImageCropper type="primary" v-model:image="images.bgImage" :aspectRatio="[63, 88]">
                 上传背景图
               </ImageCropper>
-              <ImageCropper v-model:image="images.fgImage" :aspectRatio="[69, 94]">
+              <ImageCropper type="primary" v-model:image="images.fgImage" :aspectRatio="[69, 94]">
                 上传前景图
               </ImageCropper>
               <el-button @click="images.fgImage = ''">清除前景图</el-button>
@@ -93,6 +101,8 @@
               -
               <el-link href="https://tieba.baidu.com/p/10477361730" target="_blank">模板制作：绛皓</el-link>
             </el-space>
+            <br />
+            <el-text>裁剪图片时步长过大请尝试调整鼠标滚轮单次滚动行数</el-text>
           </template>
         </el-card>
       </el-col>
@@ -103,8 +113,8 @@
           <div id="card-frame"></div>
           <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
             <div id="faction" :style="{ backgroundImage: `url(${images.factionImage})` }"></div>
-            <div class="name name2" v-if="form.name.length == 2">{{ form.name || '姓名' }}</div>
-            <div class="name name3" v-else>{{ form.name || '' }}</div>
+            <div class="name name2" :style="nameStyle" v-if="form.name.length == 2">{{ form.name || '姓名' }}</div>
+            <div class="name name3" :style="nameStyle" v-else>{{ form.name || '' }}</div>
             <div id="max-cards">{{ form.maxCards || '0' }}</div>
             <div id="skills">
               <div v-for="skill in form.skills" class="skill" :class="{ 'child-skill': skill.isChild }">
@@ -126,7 +136,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import domtoimage from 'dom-to-image';
 import ImageCropper from './components/ImageCropper.vue';
 import jingke from '@/assets/ui_s1_yuanhua_jingke.jpg'
@@ -172,11 +182,13 @@ const factions = [
   },
   {
     key: 'zhangchu',
-    value: '张楚'
+    value: '张楚',
+    black: true
   },
   {
     key: 'xichu',
-    value: '西楚'
+    value: '西楚',
+    black: true
   },
   {
     key: 'xihan',
@@ -239,8 +251,16 @@ const defaultForm = {
   ],
   topLeftText: '插画：',
   topRightText: '设计师：',
+  nameColor: 'white',
+  nameShadow: 'black',
 }
 const form = reactive(structuredClone(defaultForm));
+const nameStyle = computed(() => {
+  return {
+    color: form.nameColor,
+    'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`
+  };
+});
 const images = reactive({
   bgImage: jingke,
   fgImage: '',
@@ -265,6 +285,7 @@ watch(form, (newVal) => {
 }, { deep: true }); // deep: true 确保能监听到对象内部属性的变化
 
 const resetForm = () => {
+  localStorage.removeItem('card_data')
   Object.assign(form, defaultForm);
 }
 
@@ -302,6 +323,17 @@ const addSkill = () => {
     value: '',
     isChild: false,
   })
+}
+
+const useFaction = (faction) => {
+  form.faction = faction.key
+  if (faction.black) {
+    form.nameColor = '#000000'
+    form.nameShadow = '#ffffff'
+  } else {
+    form.nameColor = '#ffffff'
+    form.nameShadow = '#000000'
+  }
 }
 
 const uploadFactionImage = () => {
@@ -383,13 +415,11 @@ const processText = (s) => {
 .name {
   left: calc(7.5 / 69 * 100%);
   width: calc(4 / 69 * 100%);
-  color: white;
   font-size: 7cqw;
   font-weight: normal;
   writing-mode: vertical-lr;
   white-space: nowrap;
   text-align: center;
-  text-shadow: 0.4cqw 0.5cqw 0.5cqw rgba(0, 0, 0, 0.8);
 }
 
 .name2 {
@@ -401,6 +431,10 @@ const processText = (s) => {
 .name3 {
   top: 0;
   height: calc(40 / 69 * 100%);
+}
+
+.name-color span {
+  margin: 0 12px;
 }
 
 #max-cards {
