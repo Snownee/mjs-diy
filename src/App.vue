@@ -155,7 +155,7 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import domtoimage from 'dom-to-image';
 import ImageCropper from './components/ImageCropper.vue';
-import jingke from '@/assets/ui_s1_yuanhua_jingke.jpg'
+import jingke from '@/assets/ui_s1_yuanhua_jingke.webp'
 import yan from '@/assets/yan.png'
 import { ElMessage, ElMessageBox } from 'element-plus';
 
@@ -480,7 +480,7 @@ const processText = (s) => {
 }
 
 #card-frame {
-  background-image: url("assets/frame.png");
+  background-image: url("assets/frame.webp");
   background-size: contain;
 }
 
