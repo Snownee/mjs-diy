@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <el-dialog v-model="dialogVisible" title="未找到字体" width="500">
+    <el-dialog v-model="dialogVisible" title="未找到字体">
       <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。</span>
       <template #footer>
         <div class="dialog-footer">
@@ -274,7 +274,7 @@ const defaultForm = {
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
   return {
-    color: form.nameColor,
+    color: `${form.nameColor}`,
     'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`,
     'letter-spacing': `${form.nameSpacing - 2}cqw`
   };
@@ -295,15 +295,51 @@ onMounted(() => {
     Object.assign(form, JSON.parse(savedData));
   }
 
+  /**
+ * 检查一组字体中是否有任意一个在用户系统中存在
+ * @param {string[]} fonts - 字体名称数组，如 ['PingFang SC', 'Microsoft YaHei']
+ * @returns {string|null} - 返回第一个找到的字体名，若都没找到则返回 null
+ */
   const checkFonts = (fonts) => {
-    for (const font in fonts) {
-      if (document.fonts.check(`12px "${fonts[font]}"`)) {
-        console.log(`Found font: ${fonts[font]}`);
-        return true
+    const testString = "mmmmmmmmmmlli";
+    const testSize = "72px";
+    const h = document.getElementsByTagName("body")[0];
+
+    // 创建一个隐藏的容器
+    const s = document.createElement("span");
+    s.style.position = "absolute";
+    s.style.left = "-9999px";
+    s.style.fontSize = testSize;
+    s.innerHTML = testString;
+
+    // 获取基准宽度（这里用两种风格的系统默认字体做基准）
+    const getWidth = (fontFamily) => {
+      s.style.fontFamily = fontFamily;
+      h.appendChild(s);
+      const width = s.offsetWidth;
+      h.removeChild(s);
+      return width;
+    };
+
+    const monoWidth = getWidth("monospace");
+    const serifWidth = getWidth("serif");
+
+    for (const fontName of fonts) {
+      // 逻辑：如果目标字体在 mono 和 serif 下的宽度都跟基准不同，说明它确实存在
+      const checkMono = getWidth(`"${fontName}", monospace`);
+      const checkSerif = getWidth(`"${fontName}", serif`);
+
+      if (checkMono !== monoWidth || checkSerif !== serifWidth) {
+        // ElMessage.info(`✅ 找到匹配字体: ${fontName}`);
+        console.log(`✅ 找到匹配字体: ${fontName}`);
+        return fontName; // 返回找到的第一个字体名
       }
     }
-    return false
-  }
+
+    // ElMessage.info(`❌ 未找到指定的任何系统字体`);
+    console.log("❌ 未找到指定的任何系统字体");
+    return null;
+  };
 
   dialogVisible.value =
     !checkFonts([
@@ -337,8 +373,25 @@ const resetForm = () => {
 const cardRef = ref(null);
 const loading = ref(false);
 
+const isForcedDarkMode = () => {
+  // https://stackoverflow.com/questions/58646758/how-to-detect-darkmode-on-samsung-internet-browser
+  if (!navigator.userAgent.match(/Samsung/i))
+    return false;
+  const ctx = document.createElement('canvas').getContext('2d'), img = new Image();
+  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+';
+  if (!img.complete)
+    img.dispatchEvent(new Event('load'));
+  ctx.drawImage(img, 0, 0);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return (r & b & g) < 255;
+}
+
 const downloadCard = async () => {
   if (!cardRef.value) return;
+  if (isForcedDarkMode()) {
+    ElMessage.primary('请先关闭浏览器的深色模式')
+    return;
+  }
 
   loading.value = true; // 点击按钮，开启加载动画
   try {
@@ -409,6 +462,9 @@ const processText = (s) => {
   position: relative;
   font-family: "Kaiti SC", "STKaiti", "BiauKai", "楷体", "KaiTi", serif;
   container-type: inline-size;
+  color-scheme: light;
+  forced-color-adjust: none;
+  -webkit-forced-color-adjust: none;
 }
 
 .card-preview>div {
