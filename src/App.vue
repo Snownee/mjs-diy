@@ -30,7 +30,8 @@
             <el-form-item label="势力">
               <el-button-group>
                 <el-button v-for="faction in factions" @click="useFaction(faction)">{{ faction.value }}</el-button>
-                <ImageCropper v-model:image="images.factionImage" :aspectRatio="[69, 94]">
+                <ImageCropper v-model:image="images.factionImage" @change="images.customFaction = true"
+                  :aspectRatio="[69, 94]">
                   上传图片
                 </ImageCropper>
               </el-button-group>
@@ -157,7 +158,7 @@ import domtoimage from 'dom-to-image';
 import ImageCropper from './components/ImageCropper.vue';
 import jingke from '@/assets/ui_s1_yuanhua_jingke.webp'
 import yan from '@/assets/yan.png'
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 
 const factions = [
   // {
@@ -283,6 +284,7 @@ const images = reactive({
   bgImage: jingke,
   fgImage: '',
   factionImage: yan,
+  customFaction: false
 })
 
 const dialogVisible = ref(false)
@@ -359,7 +361,7 @@ onMounted(() => {
 
 // 2. 数据变化时：实时写入本地
 watch(form, (newVal) => {
-  if (images !== null) {
+  if (images !== null && !images.customFaction) {
     images.factionImage = new URL(`./assets/${newVal.faction}.png`, import.meta.url).href
   }
   localStorage.setItem('card_data', JSON.stringify(newVal));
@@ -432,6 +434,7 @@ const useFaction = (faction) => {
     form.nameColor = '#ffffff'
     form.nameShadow = '#000000'
   }
+  images.customFaction = false
 }
 
 const copy = v => {

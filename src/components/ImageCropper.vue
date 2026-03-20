@@ -36,7 +36,7 @@ const props = defineProps({
   // 接收外部 v-model:image
   image: String
 });
-const emit = defineEmits(['update:image'])
+const emit = defineEmits(['update:image', 'change'])
 
 const visible = ref(false);
 const tempImg = ref('');
@@ -66,6 +66,7 @@ const onFileChange = (e) => {
 // 确认裁剪
 const handleConfirm = () => {
   cropperRef.value.getCropData().then((data) => {
+    emit('change', data)
     emit('update:image', data)
     visible.value = false;
   });
