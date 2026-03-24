@@ -508,7 +508,7 @@ const processText = (s) => {
 }
 
 .name {
-  left: calc(7.5 / 69 * 100%);
+  left: calc(7.25 / 69 * 100%);
   width: calc(4 / 69 * 100%);
   font-size: 7cqw;
   font-weight: normal;
@@ -526,7 +526,7 @@ const processText = (s) => {
 
 .name3 {
   top: 0;
-  height: calc(40 / 69 * 100%);
+  height: calc(38 / 69 * 100%);
 }
 
 .name-color span {
