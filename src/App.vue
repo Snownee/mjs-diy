@@ -101,6 +101,10 @@
               <el-button @click="images.fgImage = ''">清除前景图</el-button>
             </el-form-item>
 
+            <el-form-item label="自定义CSS">
+              <el-input v-model="form.customCss" :autosize="{ minRows: 1, maxRows: 20 }" type="textarea" />
+            </el-form-item>
+
             <el-form-item>
               <div style="width: 100%; display: flex; gap: 12px;">
                 <el-button type="primary" @click="downloadCard" :loading="loading" style="flex: 1">
@@ -125,6 +129,7 @@
       </el-col>
 
       <el-col :xs="24" :sm="8" class="preview-section">
+        <component is="style">{{ form.customCss }}</component>
         <div ref="cardRef" class="card-preview">
           <div id="card-bg" :style="{ backgroundImage: `url(${images.bgImage})` }"></div>
           <div id="card-frame"></div>
@@ -270,7 +275,8 @@ const defaultForm = {
   topRightText: '设计师：',
   nameColor: 'white',
   nameShadow: 'black',
-  nameSpacing: 0
+  nameSpacing: 0,
+  customCss: ''
 }
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
