@@ -22,7 +22,10 @@ jobs:
 
       # 将打包后的 dist 目录压缩为 zip，方便用户下载
       - name: Archive dist
-        run: zip -r release-build.zip dist/
+        # 切换到 dist 目录内执行压缩，这样压缩包内就不含 dist 文件夹本身了
+        run: |
+          cd dist
+          zip -r ../release-build.zip .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
