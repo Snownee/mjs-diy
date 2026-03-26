@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <el-dialog v-model="dialogVisible" title="未找到字体">
-      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。</span>
+      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在PC上使用本应用。</span>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">确认</el-button>
@@ -64,7 +64,7 @@
             </el-form-item>
             <el-form-item label=" ">
               <el-button type="primary" @click="addSkill">新技能</el-button>
-              <el-popover>
+              <el-popover :width="300">
                 <template #reference>
                   <el-button>编辑帮助</el-button>
                 </template>
@@ -77,11 +77,13 @@
                     '☯': '☯',
                     '粗体': '<b>粗体</b>',
                     '斜体': '<i>斜体</i>',
+                    '下划线': '<u>下划线</u>',
+                    '缩小': '<small>缩小</small>',
                     '橙色': '<span.orange>橙色</span>',
                     '绿色': '<span.green>绿色</span>',
                     '黄色': '<span.yellow>黄色</span>',
                     '灰色': '<span.gray>灰色</span>'
-                  }">{{ k }}</el-button>
+                  }" v-html="processText(v)"></el-button>
                 </el-button-group>
               </el-popover>
             </el-form-item>
@@ -362,7 +364,8 @@ onMounted(() => {
       "PingFang SC",
       "Microsoft YaHei",
       "Noto Sans CJK SC",
-      "WenQuanYi Micro Hei"])
+      "WenQuanYi Micro Hei",
+      "SimHei"])
 });
 
 // 2. 数据变化时：实时写入本地
