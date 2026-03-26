@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <el-dialog v-model="dialogVisible" title="未找到字体">
-      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在PC上使用本应用。</span>
+      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在有相应字体的PC上使用本应用。</span>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">确认</el-button>
@@ -43,6 +43,14 @@
                 <el-color-picker v-model="form.nameColor" show-alpha />
                 <span>阴影颜色</span>
                 <el-color-picker v-model="form.nameShadow" show-alpha />
+              </div>
+              <div>
+                <span>水平偏移</span>
+                <el-input-number v-model="form.nameTransX" :precision="2" :step="0.1" />
+              </div>
+              <div>
+                <span>垂直偏移</span>
+                <el-input-number v-model="form.nameTransY" :precision="2" :step="0.1" />
               </div>
               <div>
                 <span>字符间距</span>
@@ -278,6 +286,8 @@ const defaultForm = {
   nameColor: 'white',
   nameShadow: 'black',
   nameSpacing: 0,
+  nameTransX: 0,
+  nameTransY: 0,
   customCss: ''
 }
 const form = reactive(structuredClone(defaultForm));
@@ -285,7 +295,8 @@ const nameStyle = computed(() => {
   return {
     color: `${form.nameColor}`,
     'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`,
-    'letter-spacing': `${form.nameSpacing - 2}cqw`
+    'letter-spacing': `${form.nameSpacing - 2}cqw`,
+    'transform': `translate(${form.nameTransX}cqw, ${form.nameTransY}cqw)`
   };
 });
 const images = reactive({
