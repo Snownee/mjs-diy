@@ -543,7 +543,7 @@ const skillDot = (skill) => {
 #skills {
   position: absolute;
   bottom: 16cqw;
-  width: 80cqw;
+  width: 83cqw;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -566,8 +566,8 @@ const skillDot = (skill) => {
   padding: 0.5cqw;
   margin-top: 0.6cqw;
   /* 增加了透明度：从上往下深灰到中灰，rgba(r,g,b,0.7) */
-  background: linear-gradient(to bottom, rgba(74, 74, 74, 0.7) 0%, rgba(117, 117, 117, 0.7) 30%, rgba(109, 109, 109, 0.7) 100%);
-  border: 0.2cqw solid #9994;
+  background: linear-gradient(to bottom, rgba(74, 74, 74, 0.5) 0%, rgba(117, 117, 117, 0.5) 30%, rgba(109, 109, 109, 0.5) 100%);
+  border: 0.4cqw solid #9994;
   /* 外部投影，增加浮起感 */
   box-shadow: 0 0 2cqw rgba(0, 0, 0, 0.5);
   color: #ffffff;
@@ -646,7 +646,9 @@ const skillDot = (skill) => {
   font-size: 2.5cqw;
   line-height: 1.4;
   color: #e0e0e0;
-  text-shadow: 0.1cqw 0.1cqw 0.2cqw rgba(0, 0, 0, 0.8);
+  text-shadow:
+    0.1cqw 0.1cqw 0.2cqw rgba(0, 0, 0, 0.8),
+    0cqw 0cqw 0.5cqw rgba(0, 0, 0, 0.8);
   font-weight: 300;
   font-family:
     /* 1. 优先调用本地思源黑体 */
