@@ -149,6 +149,7 @@
           <div id="card-bg" :style="{ backgroundImage: `url(${images.bgImage})` }"></div>
           <div id="card-frame"></div>
           <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
+            <div id="max-cards-bg"></div>
             <div id="faction" :style="{ backgroundImage: `url(${images.factionImage})` }"></div>
             <div class="name name2" :style="nameStyle" v-if="form.name.length == 2">{{ form.name || '姓名' }}</div>
             <div class="name name3" :style="nameStyle" v-else>{{ form.name || '' }}</div>
@@ -177,7 +178,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue';
 import domtoimage from 'dom-to-image';
 import ImageCropper from './components/ImageCropper.vue';
 import jingke from '@/assets/ui_s1_yuanhua_jingke.webp'
-import yan from '@/assets/yan.png'
+import yan from '@/assets/yan.webp'
 import { ElMessage } from 'element-plus';
 import { View } from '@element-plus/icons-vue'
 import { useElementVisibility } from './useElementVisibility';
@@ -275,7 +276,7 @@ onMounted(() => {
 // 2. 数据变化时：实时写入本地
 watch(form, (newVal) => {
   if (images !== null && !images.customFaction) {
-    images.factionImage = new URL(`./assets/${newVal.faction}.png`, import.meta.url).href
+    images.factionImage = new URL(`./assets/${newVal.faction}.webp`, import.meta.url).href
   }
   localStorage.setItem('card_data', JSON.stringify(newVal));
 }, { deep: true }); // deep: true 确保能监听到对象内部属性的变化
@@ -283,6 +284,8 @@ watch(form, (newVal) => {
 const resetForm = () => {
   localStorage.removeItem('card_data')
   Object.assign(form, defaultForm);
+
+  images.fgImage = ''
 }
 
 const cardRef = ref(null);
@@ -475,6 +478,11 @@ const skillDot = (skill) => {
   background-size: contain;
 }
 
+#max-cards-bg {
+  background-image: url("assets/max-cards.webp");
+  background-size: contain;
+}
+
 #card-bg {
   /*
   尺寸：69 / 94
@@ -540,7 +548,8 @@ const skillDot = (skill) => {
   transform: translateX(-50%);
 }
 
-#faction {
+#faction,
+#max-cards-bg {
   box-sizing: border-box;
   background-size: contain;
   background-origin: content-box;
@@ -663,8 +672,8 @@ const skillDot = (skill) => {
 
 .hp-point {
   display: inline-block;
-  height: 4.5cqw;
-  width: 4.5cqw;
+  height: 4cqw;
+  width: 4cqw;
   background: url("assets/hp.png");
   background-repeat: no-repeat;
   background-size: contain;
