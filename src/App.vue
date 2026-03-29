@@ -150,7 +150,7 @@
             <div id="max-cards">{{ form.maxCards || '0' }}</div>
             <div id="skills">
               <div v-for="skill in form.skills" class="skill" :class="{ 'child-skill': skill.isChild }">
-                <div class="skill-name skill-dot" data-text="◆">◆&nbsp;&nbsp;</div>
+                <div class="skill-name skill-dot" :data-text="skillDot(skill)">{{ skillDot(skill) }}&nbsp;&nbsp;</div>
                 <div class="skill-name" :data-text="skill.key">{{ skill.key }}</div>
                 <div class="skill-desc" v-html="processText(skill.value)"></div>
               </div>
@@ -476,6 +476,10 @@ const processText = (s) => {
     s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`)
   }
   return s
+}
+
+const skillDot = (skill) => {
+  return skill.isChild ? '●' : '◆'
 }
 </script>
 
