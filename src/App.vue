@@ -378,12 +378,13 @@ const skillDot = (skill) => {
 <style scoped>
 .card-preview {
   aspect-ratio: 69 / 94;
-  position: relative;
   font-family: "Kaiti SC", "STKaiti", "BiauKai", "楷体", "KaiTi", serif;
   container-type: inline-size;
   color-scheme: light;
   forced-color-adjust: none;
   -webkit-forced-color-adjust: none;
+  position: sticky;
+  top: 0;
 }
 
 .fullscreen-preview .preview-section {
