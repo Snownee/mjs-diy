@@ -8,13 +8,14 @@
 
     <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="onFileChange" />
 
-    <el-dialog v-model="visible" title="图片裁剪" width="600px" append-to-body @closed="cleanup">
+    <el-dialog v-model="visible" title="图片裁剪" width="432px" append-to-body @closed="cleanup" center>
       <div class="cropper-container">
         <vue-cropper ref="cropperRef" :img="tempImg" :wrapper="{ width: 400, height: 400 }"
           :cropLayout="{ width: 300 * aspectRatio[0] / aspectRatio[1], height: 300 }" :centerBox="true"
           :original="true" />
       </div>
       <template #footer>
+        <el-text class="hide-in-mobile">裁剪图片时步长过大请尝试调整鼠标滚轮单次滚动行数<br></el-text>
         <el-button @click="visible = false">取消</el-button>
         <el-button type="primary" @click="handleConfirm">确认裁剪</el-button>
       </template>

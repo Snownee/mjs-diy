@@ -135,8 +135,6 @@
               -
               <el-link href="https://tieba.baidu.com/p/10477361730" target="_blank">模板制作：绛皓</el-link>
             </el-space>
-            <br />
-            <el-text>裁剪图片时步长过大请尝试调整鼠标滚轮单次滚动行数</el-text>
           </template>
         </el-card>
       </el-col>
@@ -709,7 +707,6 @@ const skillDot = (skill) => {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* 移动端预览区也增加一点间距 */
 @media (max-width: 767px) {
   .preview-section {
     margin-top: 30px;
