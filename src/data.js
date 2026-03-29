@@ -88,7 +88,7 @@ export const defaultForm = {
     {
       id: -1,
       key: '图穷匕见',
-      value: '<span.yellow>出牌阶段限1次</span>，当你失去最后手牌时，添加1张&ldquo;徐夫人匕首&rdquo;和1张杀到你的手牌。',
+      value: '<span.yellow>出牌阶段限1次</span>，当你失去最后手牌时，添加1张“徐夫人匕首”和1张杀到你的手牌。',
       isChild: false,
     },
     {
