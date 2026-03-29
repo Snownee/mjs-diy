@@ -63,7 +63,8 @@
             <el-form-item v-for="(skill, index) in form.skills" :key="skill.id" :label="'技能' + (index + 1)"
               :prop="'skills.' + index + '.value'">
               <el-input v-model="skill.key" placeholder="技能名" />
-              <el-input v-model="skill.value" :autosize="{ minRows: 2 }" type="textarea" placeholder="技能描述" />
+              <el-input v-model="skill.value" :autosize="{ minRows: 2 }" type="textarea" placeholder="技能描述"
+                @focus="focusSkillDescInput" />
               <div style="width: 100%; display: flex; gap: 12px;">
                 <el-checkbox v-model="skill.isChild" label="衍生技" />
                 <div style="flex: 1"></div>
@@ -79,7 +80,7 @@
                   <el-button>编辑帮助</el-button>
                 </template>
                 <el-button-group>
-                  <el-button @click="copy(v)" v-for="(v, k) in {
+                  <el-button @click="formatOrCopy(v, k)" v-for="(v, k) in {
                     '♠': '♠',
                     '♣': '♣',
                     '♥': '♥',
@@ -286,6 +287,9 @@ const cardRef = ref(null);
 const loading = ref(false);
 const fullscreenPreview = ref(false)
 const canSeeCard = useElementVisibility('.preview-section');
+const lastSkillDescInput = ref(null)
+
+const focusSkillDescInput = (e) => lastSkillDescInput.value = e.target
 
 const isForcedDarkMode = () => {
   // https://stackoverflow.com/questions/58646758/how-to-detect-darkmode-on-samsung-internet-browser
@@ -349,9 +353,51 @@ const useFaction = (faction) => {
   images.customFaction = false
 }
 
-const copy = v => {
-  navigator.clipboard.writeText(v)
-  ElMessage.success('已复制')
+const formatOrCopy = (v, k) => {
+  const textarea = lastSkillDescInput.value;
+  let success = false;
+  if (textarea && textarea.isConnected) {
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const originalText = textarea.value;
+
+    if (k === v) {
+      textarea.value =
+        originalText.substring(0, start) +
+        k +
+        originalText.substring(end);
+      // 补偿逻辑：替换后将焦点还给 textarea，方便用户继续编辑
+      textarea.setSelectionRange(start + k.length, start + k.length);
+      success = true
+    } else {
+      // 只有当有文字被选中时才执行
+      if (start !== end) {
+        const selectedText = originalText.substring(start, end);
+
+        // 执行替换
+        const newSelectedText = v.replace(k, selectedText);
+
+        // 回填数据
+        textarea.value =
+          originalText.substring(0, start) +
+          newSelectedText +
+          originalText.substring(end);
+
+        // 补偿逻辑：替换后将焦点还给 textarea，方便用户继续编辑
+        textarea.setSelectionRange(start, start + newSelectedText.length);
+        success = true
+      }
+    }
+  }
+  if (success) {
+    textarea.focus();
+    // 触发reactive更新
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+  } else {
+    navigator.clipboard.writeText(v)
+    ElMessage.success('已复制')
+  }
 }
 
 const processText = (s) => {
