@@ -404,6 +404,7 @@ const formatOrCopy = (v, k) => {
 
 const processText = (s) => {
   s = s.replaceAll('\n', '<br/>')
+  s = s.replaceAll(' ', '&nbsp;')
   s = s.replaceAll(`<span.`, `<span class=`)
   for (const [k, v] of Object.entries({
     '♠': 'spades',
