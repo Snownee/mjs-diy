@@ -1,5 +1,7 @@
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrapper" :class="{ 'fullscreen-preview': fullscreenPreview }">
+    <el-button id="preview-button" :icon="View" size="large" circle @click="fullscreenPreview = true"
+      v-if="!fullscreenPreview && !canSeeCard" />
     <el-dialog v-model="dialogVisible" title="未找到字体">
       <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在有相应字体的PC上使用本应用。</span>
       <template #footer>
@@ -138,7 +140,7 @@
         </el-card>
       </el-col>
 
-      <el-col :xs="24" :sm="8" class="preview-section">
+      <el-col :xs="24" :sm="8" class="preview-section" @click="fullscreenPreview = false">
         <component is="style">{{ form.customCss }}</component>
         <div ref="cardRef" class="card-preview">
           <div id="card-bg" :style="{ backgroundImage: `url(${images.bgImage})` }"></div>
@@ -174,122 +176,10 @@ import ImageCropper from './components/ImageCropper.vue';
 import jingke from '@/assets/ui_s1_yuanhua_jingke.webp'
 import yan from '@/assets/yan.png'
 import { ElMessage } from 'element-plus';
+import { View } from '@element-plus/icons-vue'
+import { useElementVisibility } from './useElementVisibility';
+import { factions, defaultForm } from './data';
 
-const factions = [
-  // {
-  //   key: 'wushili',
-  //   value: '无势力'
-  // },
-  {
-    key: 'fei',
-    value: '匪'
-  },
-  {
-    key: 'qi',
-    value: '齐'
-  },
-  {
-    key: 'yan',
-    value: '燕'
-  },
-  {
-    key: 'chu',
-    value: '楚'
-  },
-  {
-    key: 'qin',
-    value: '秦'
-  },
-  {
-    key: 'han',
-    value: '韩'
-  },
-  {
-    key: 'zhao',
-    value: '赵'
-  },
-  {
-    key: 'wei',
-    value: '魏'
-  },
-  {
-    key: 'zhangchu',
-    value: '张楚',
-    black: true
-  },
-  {
-    key: 'xichu',
-    value: '西楚',
-    black: true
-  },
-  {
-    key: 'xihan',
-    value: '西汉'
-  },
-  {
-    key: 'donghan',
-    value: '东汉'
-  },
-  {
-    key: 'huangjin',
-    value: '黄巾'
-  },
-  {
-    key: 'caowei',
-    value: '曹魏'
-  },
-  {
-    key: 'shuhan',
-    value: '蜀汉'
-  },
-  {
-    key: 'sunwu',
-    value: '孙吴'
-  },
-  {
-    key: 'song',
-    value: '宋'
-  },
-  {
-    key: 'jin',
-    value: '晋'
-  }
-]
-
-const defaultForm = {
-  name: '荆轲',
-  maxHP: 6,
-  maxCards: 3,
-  faction: 'yan',
-  skills: [
-    {
-      id: -1,
-      key: '图穷匕见',
-      value: '<span.yellow>出牌阶段限1次</span>，当你失去最后手牌时，添加1张&ldquo;徐夫人匕首&rdquo;和1张杀到你的手牌。',
-      isChild: false,
-    },
-    {
-      id: -2,
-      key: '把袖而揕',
-      value: '<span.yellow>出牌阶段限1次</span>，你可以交给一名其他角色1张手牌，令你与其的距离变为1，并且你对其造成的下一次伤害+1，直到回合结束。',
-      isChild: false,
-    },
-    {
-      id: -3,
-      key: '持匕掷柱',
-      value: '当你的杀被抵消后，你可以弃置1张武器牌，对该角色造成1点伤害。',
-      isChild: false,
-    }
-  ],
-  topLeftText: '插画：',
-  topRightText: '设计师：',
-  nameColor: 'white',
-  nameShadow: 'black',
-  nameSpacing: 0,
-  nameTransX: 0,
-  nameTransY: 0,
-  customCss: ''
-}
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
   return {
@@ -394,6 +284,8 @@ const resetForm = () => {
 
 const cardRef = ref(null);
 const loading = ref(false);
+const fullscreenPreview = ref(false)
+const canSeeCard = useElementVisibility('.preview-section');
 
 const isForcedDarkMode = () => {
   // https://stackoverflow.com/questions/58646758/how-to-detect-darkmode-on-samsung-internet-browser
@@ -492,6 +384,28 @@ const skillDot = (skill) => {
   color-scheme: light;
   forced-color-adjust: none;
   -webkit-forced-color-adjust: none;
+}
+
+.fullscreen-preview .preview-section {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  overflow: scroll;
+  margin-top: unset;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: unset;
+}
+
+.fullscreen-preview .form-section {
+  display: none;
 }
 
 .card-preview>div {
@@ -739,10 +653,23 @@ const skillDot = (skill) => {
   padding: 40px 20px;
 }
 
+#preview-button {
+  display: none;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 /* 移动端预览区也增加一点间距 */
 @media (max-width: 767px) {
   .preview-section {
     margin-top: 30px;
+  }
+
+  #preview-button {
+    display: block;
   }
 }
 </style>
