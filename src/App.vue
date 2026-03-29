@@ -74,29 +74,31 @@
               </div>
             </el-form-item>
             <el-form-item label=" ">
-              <el-button type="primary" @click="addSkill">新技能</el-button>
-              <el-popover :width="300">
-                <template #reference>
-                  <el-button>编辑帮助</el-button>
-                </template>
-                <el-button-group>
-                  <el-button @click="formatOrCopy(v, k)" v-for="(v, k) in {
-                    '♠': '♠',
-                    '♣': '♣',
-                    '♥': '♥',
-                    '♦': '♦',
-                    '☯': '☯',
-                    '粗体': '<b>粗体</b>',
-                    '斜体': '<i>斜体</i>',
-                    '下划线': '<u>下划线</u>',
-                    '缩小': '<small>缩小</small>',
-                    '橙色': '<span.orange>橙色</span>',
-                    '绿色': '<span.green>绿色</span>',
-                    '黄色': '<span.yellow>黄色</span>',
-                    '灰色': '<span.gray>灰色</span>'
-                  }" v-html="processText(v)"></el-button>
-                </el-button-group>
-              </el-popover>
+              <div class="button-row">
+                <el-button type="primary" @click="addSkill">新技能</el-button>
+                <el-popover :width="300">
+                  <template #reference>
+                    <el-button>编辑帮助</el-button>
+                  </template>
+                  <el-button-group>
+                    <el-button @click="formatOrCopy(v, k)" v-for="(v, k) in {
+                      '♠': '♠',
+                      '♣': '♣',
+                      '♥': '♥',
+                      '♦': '♦',
+                      '☯': '☯',
+                      '粗体': '<b>粗体</b>',
+                      '斜体': '<i>斜体</i>',
+                      '下划线': '<u>下划线</u>',
+                      '缩小': '<small>缩小</small>',
+                      '橙色': '<span.orange>橙色</span>',
+                      '绿色': '<span.green>绿色</span>',
+                      '黄色': '<span.yellow>黄色</span>',
+                      '灰色': '<span.gray>灰色</span>'
+                    }" v-html="processText(v)"></el-button>
+                  </el-button-group>
+                </el-popover>
+              </div>
             </el-form-item>
 
             <el-form-item label="顶部文字">
@@ -105,13 +107,15 @@
             </el-form-item>
 
             <el-form-item label="图片">
-              <ImageCropper type="primary" v-model:image="images.bgImage" :aspectRatio="[63, 88]">
-                上传背景图
-              </ImageCropper>
-              <ImageCropper v-model:image="images.fgImage" :aspectRatio="[69, 94]">
-                上传前景图
-              </ImageCropper>
-              <el-button @click="images.fgImage = ''">清除前景图</el-button>
+              <div class="button-row">
+                <ImageCropper type="primary" v-model:image="images.bgImage" :aspectRatio="[63, 88]">
+                  上传背景图
+                </ImageCropper>
+                <ImageCropper v-model:image="images.fgImage" :aspectRatio="[69, 94]">
+                  上传前景图
+                </ImageCropper>
+                <el-button @click="images.fgImage = ''">清除前景图</el-button>
+              </div>
             </el-form-item>
 
             <el-form-item label="自定义CSS">
@@ -705,6 +709,17 @@ const skillDot = (skill) => {
   bottom: 20px;
   z-index: 900;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  align-items: center;
+}
+
+.button-row>* {
+  margin: 0;
 }
 
 @media (max-width: 767px) {
