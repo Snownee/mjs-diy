@@ -721,7 +721,7 @@ const skillDot = (skill) => {
   display: none;
   position: fixed;
   right: 20px;
-  bottom: 20px;
+  bottom: 60px;
   z-index: 900;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
 }
