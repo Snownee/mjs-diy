@@ -2,11 +2,19 @@
   <div class="app-wrapper" :class="{ 'fullscreen-preview': fullscreenPreview }">
     <el-button id="preview-button" :icon="View" size="large" circle @click="fullscreenPreview = true"
       v-if="!fullscreenPreview && !canSeeCard" />
-    <el-dialog v-model="dialogVisible" title="未找到字体">
+    <el-dialog v-model="missingFontDialogVisible" title="未找到字体">
       <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在有相应字体的PC上使用本应用。</span>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">确认</el-button>
+          <el-button @click="missingFontDialogVisible = false">确认</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="copyInfoDialogVisible" width="75%">
+      <el-input v-model="infoInput" :rows="12" type="textarea" />
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="copyInfoAndClose">复制并关闭</el-button>
         </div>
       </template>
     </el-dialog>
@@ -98,6 +106,7 @@
                     }" v-html="processText(v)"></el-button>
                   </el-button-group>
                 </el-popover>
+                <el-button @click="copyInfo">复制文案</el-button>
               </div>
             </el-form-item>
 
@@ -200,7 +209,8 @@ const images = reactive({
   customFaction: false
 })
 
-const dialogVisible = ref(false)
+const missingFontDialogVisible = ref(false)
+const copyInfoDialogVisible = ref(false)
 
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
@@ -256,7 +266,7 @@ onMounted(() => {
     return null;
   };
 
-  dialogVisible.value =
+  missingFontDialogVisible.value =
     !checkFonts([
       "Kaiti SC",
       "STKaiti",
@@ -400,8 +410,7 @@ const formatOrCopy = (v, k) => {
     // 触发reactive更新
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
   } else {
-    navigator.clipboard.writeText(v)
-    ElMessage.success('已复制')
+    navigator.clipboard.writeText(v).then(_ => ElMessage.success('已复制'))
   }
 }
 
@@ -424,6 +433,37 @@ const processText = (s) => {
 
 const skillDot = (skill) => {
   return skill.isChild ? '●' : '◆'
+}
+
+const infoInput = ref('')
+
+const copyInfo = () => {
+  const stripHtml = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  }
+
+  let faction = form.faction
+  for (const data of factions) {
+    if (faction === data.key) {
+      faction = data.value
+      break
+    }
+  }
+  let s = `${form.name} ${form.maxCards}手牌 ${form.maxHP}体力上限 ${faction}`
+  for (const skill of form.skills) {
+    s += `
+【${skill.key}】${skill.isChild ? '（衍生技）' : ''}
+${stripHtml(skill.value)}`
+  }
+
+  infoInput.value = s
+  copyInfoDialogVisible.value = true
+}
+
+const copyInfoAndClose = () => {
+  navigator.clipboard.writeText(infoInput.value).then(_ => ElMessage.success('已复制'))
+  copyInfoDialogVisible.value = false
 }
 </script>
 
