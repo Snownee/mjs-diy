@@ -47,6 +47,12 @@
               </el-button-group>
             </el-form-item>
 
+            <el-form-item label="品质">
+              <el-button-group>
+                <el-button v-for="rarity in rarities" @click="form.rarity = rarity.key">{{ rarity.value }}</el-button>
+              </el-button-group>
+            </el-form-item>
+
             <el-form-item label="姓名样式" class="name-color">
               <div>
                 <span>文字颜色</span>
@@ -160,6 +166,7 @@
           <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
             <div id="max-cards-bg"></div>
             <div id="faction" :style="{ backgroundImage: `url(${images.factionImage})` }"></div>
+            <div id="rarity" :style="{ backgroundImage: `url(${rarityImage()})` }"></div>
             <div class="name name2" :style="nameStyle" v-if="form.name.length == 2">{{ form.name || '姓名' }}</div>
             <div class="name name3" :style="nameStyle" v-else>{{ form.name || '' }}</div>
             <div id="max-cards">{{ form.maxCards || '0' }}</div>
@@ -191,7 +198,7 @@ import yan from '@/assets/yan.webp'
 import { ElMessage } from 'element-plus';
 import { View } from '@element-plus/icons-vue'
 import { useElementVisibility } from './useElementVisibility';
-import { factions, defaultForm } from './data';
+import { factions, rarities, defaultForm } from './data';
 
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
@@ -366,6 +373,14 @@ const useFaction = (faction) => {
     form.nameShadow = '#000000'
   }
   images.customFaction = false
+}
+
+const rarityImage = () => {
+  const rarity = form.rarity
+  if (rarity && rarity !== '') {
+    return new URL(`./assets/${rarity}.webp`, import.meta.url).href
+  }
+  return ''
 }
 
 const formatOrCopy = (v, k) => {
@@ -552,6 +567,18 @@ const copyInfoAndClose = () => {
   letter-spacing: -2cqw;
   white-space: nowrap;
   text-align: center;
+}
+
+#rarity {
+  position: absolute;
+  background-size: contain;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+  position: absolute;
+  left: calc(9 / 69 * 100%);
+  top: calc(35.9 / 94 * 100%);
+  width: calc(46 / 69 * 8%);
+  height: calc(50 / 69 * 8%);
 }
 
 .name2 {

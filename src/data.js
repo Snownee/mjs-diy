@@ -79,11 +79,35 @@ export const factions = [
   }
 ]
 
+export const rarities = [
+  {
+    key: '',
+    value: '无'
+  },
+  {
+    key: 'putong',
+    value: '普通'
+  },
+  {
+    key: 'xiyou',
+    value: '稀有'
+  },
+  {
+    key: 'shishi',
+    value: '史诗'
+  },
+  {
+    key: 'chuanshuo',
+    value: '传说'
+  }
+]
+
 export const defaultForm = {
   name: '荆轲',
   maxHP: 6,
   maxCards: 3,
   faction: 'yan',
+  rarity: '',
   skills: [
     {
       id: -1,
