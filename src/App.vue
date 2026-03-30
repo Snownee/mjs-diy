@@ -667,13 +667,16 @@ const skillDot = (skill) => {
 #max-hp {
   position: absolute;
   bottom: 9cqw;
-  height: 4.5cqw;
+  height: 5cqw;
+  width: 40cqw;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .hp-point {
-  display: inline-block;
   height: 4cqw;
   width: 4cqw;
   background: url("assets/hp.png");
