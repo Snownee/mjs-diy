@@ -812,5 +812,9 @@ const copyInfoAndClose = () => {
   #preview-button {
     display: block;
   }
+
+  .main-row {
+    padding: 0 0;
+  }
 }
 </style>
