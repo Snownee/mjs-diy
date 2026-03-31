@@ -162,8 +162,7 @@
         <component is="style">{{ form.customCss }}</component>
         <div ref="cardRef" class="card-preview">
           <div id="card-bg" :style="{ backgroundImage: `url(${images.bgImage})` }"></div>
-          <div id="card-frame"></div>
-          <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
+          <div id="card-content">
             <div id="max-cards-bg"></div>
             <div id="faction" :style="{ backgroundImage: `url(${images.factionImage})` }"></div>
             <div id="rarity" :style="{ backgroundImage: `url(${rarityImage()})` }"></div>
@@ -177,6 +176,9 @@
                 <div class="skill-desc" v-html="processText(skill.value)"></div>
               </div>
             </div>
+          </div>
+          <div id="card-frame"></div>
+          <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
             <div id="max-hp">
               <div class="hp-point" v-for="i in form.maxHP"></div>
             </div>
@@ -547,14 +549,16 @@ const copyInfoAndClose = () => {
 }
 
 #card-bg,
-#card-fg {
+#card-fg,
+#card-content {
   box-sizing: border-box;
   background-size: contain;
   background-origin: content-box;
   background-repeat: no-repeat;
 }
 
-#card-fg>* {
+#card-fg>*,
+#card-content>* {
   position: relative;
 }
 
