@@ -223,7 +223,10 @@ const copyInfoDialogVisible = ref(false)
 
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
-  const savedData = localStorage.getItem('card_data');
+  const savedData = localStorage.getItem('mjs_diy_card_data');
+  if (!savedData) {
+    savedData = localStorage.getItem('card_data');
+  }
   if (savedData) {
     // 将字符串转回对象并赋值
     Object.assign(form, JSON.parse(savedData));
@@ -297,11 +300,11 @@ watch(form, (newVal) => {
   if (images !== null && !images.customFaction) {
     images.factionImage = new URL(`./assets/${newVal.faction}.webp`, import.meta.url).href
   }
-  localStorage.setItem('card_data', JSON.stringify(newVal));
+  localStorage.setItem('mjs_diy_card_data', JSON.stringify(newVal));
 }, { deep: true }); // deep: true 确保能监听到对象内部属性的变化
 
 const resetForm = () => {
-  localStorage.removeItem('card_data')
+  localStorage.removeItem('mjs_diy_card_data')
   Object.assign(form, defaultForm);
 
   images.fgImage = ''
