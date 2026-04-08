@@ -6,16 +6,39 @@
       </slot>
     </div>
 
-    <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="onFileChange" />
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      style="display: none"
+      @change="onFileChange"
+    />
 
-    <el-dialog v-model="visible" title="图片裁剪" width="432px" append-to-body @closed="cleanup" center>
+    <el-dialog
+      v-model="visible"
+      title="图片裁剪"
+      width="432px"
+      append-to-body
+      @closed="cleanup"
+      center
+    >
       <div class="cropper-container">
-        <vue-cropper ref="cropperRef" :img="tempImg" :wrapper="{ width: 400, height: 400 }"
-          :cropLayout="{ width: 300 * aspectRatio[0] / aspectRatio[1], height: 300 }" :centerBox="true"
-          :original="true" />
+        <vue-cropper
+          ref="cropperRef"
+          :img="tempImg"
+          :wrapper="{ width: 400, height: 400 }"
+          :cropLayout="{
+            width: (300 * aspectRatio[0]) / aspectRatio[1],
+            height: 300,
+          }"
+          :centerBox="true"
+          :original="true"
+        />
       </div>
       <template #footer>
-        <el-text class="hide-in-mobile">裁剪图片时步长过大请尝试调整鼠标滚轮单次滚动行数<br></el-text>
+        <el-text class="hide-in-mobile"
+          >裁剪图片时步长过大请尝试调整鼠标滚轮单次滚动行数<br
+        /></el-text>
         <el-button @click="visible = false">取消</el-button>
         <el-button type="primary" @click="handleConfirm">确认裁剪</el-button>
       </template>
@@ -24,23 +47,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import 'cropper-next-vue/style.css'
-import { VueCropper } from 'cropper-next-vue'
+import { ref } from "vue";
+import "cropper-next-vue/style.css";
+import { VueCropper } from "cropper-next-vue";
 
 const props = defineProps({
   // 裁剪比例，默认名片比例 9:5
   aspectRatio: {
     type: Array,
-    default: () => [1, 5]
+    default: () => [1, 5],
   },
   // 接收外部 v-model:image
-  image: String
+  image: String,
 });
-const emit = defineEmits(['update:image', 'change'])
+const emit = defineEmits(["update:image", "change"]);
 
 const visible = ref(false);
-const tempImg = ref('');
+const tempImg = ref("");
 const fileInput = ref(null);
 const cropperRef = ref(null);
 
@@ -61,20 +84,20 @@ const onFileChange = (e) => {
   };
   reader.readAsDataURL(file);
   // 清除 value 保证同名文件可重复触发
-  e.target.value = '';
+  e.target.value = "";
 };
 
 // 确认裁剪
 const handleConfirm = () => {
   cropperRef.value.getCropData().then((data) => {
-    emit('change', data)
-    emit('update:image', data)
+    emit("change", data);
+    emit("update:image", data);
     visible.value = false;
   });
 };
 
 const cleanup = () => {
-  tempImg.value = '';
+  tempImg.value = "";
 };
 </script>
 

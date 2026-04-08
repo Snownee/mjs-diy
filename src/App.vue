@@ -1,9 +1,17 @@
 <template>
   <div class="app-wrapper" :class="{ 'fullscreen-preview': fullscreenPreview }">
-    <el-button id="preview-button" :icon="View" size="large" circle @click="fullscreenPreview = true"
-      v-if="!fullscreenPreview && !canSeeCard" />
+    <el-button
+      id="preview-button"
+      :icon="View"
+      size="large"
+      circle
+      @click="fullscreenPreview = true"
+      v-if="!fullscreenPreview && !canSeeCard"
+    />
     <el-dialog v-model="missingFontDialogVisible" title="未找到字体">
-      <span>没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在有相应字体的PC上使用本应用。</span>
+      <span
+        >没有在你的设备上找到生成图片所需的字体，生成的图片可能无法达到最佳效果。<br /><br />推荐安装楷体和黑体，或是在有相应字体的PC上使用本应用。</span
+      >
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="missingFontDialogVisible = false">确认</el-button>
@@ -14,7 +22,9 @@
       <el-input v-model="infoInput" :rows="12" type="textarea" />
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="copyInfoAndClose">复制并关闭</el-button>
+          <el-button type="primary" @click="copyInfoAndClose"
+            >复制并关闭</el-button
+          >
         </div>
       </template>
     </el-dialog>
@@ -24,9 +34,17 @@
           <template #header>
             <h3>信息设置</h3>
           </template>
-          <el-form :model="form" label-width="auto" style="max-width: 460px; margin: 0 auto;">
+          <el-form
+            :model="form"
+            label-width="auto"
+            style="max-width: 460px; margin: 0 auto"
+          >
             <el-form-item label="姓名">
-              <el-input v-model="form.name" placeholder="请输入姓名" clearable />
+              <el-input
+                v-model="form.name"
+                placeholder="请输入姓名"
+                clearable
+              />
             </el-form-item>
 
             <el-form-item label="血量">
@@ -39,9 +57,16 @@
 
             <el-form-item label="势力">
               <el-button-group>
-                <el-button v-for="faction in factions" @click="useFaction(faction)">{{ faction.value }}</el-button>
-                <ImageCropper v-model:image="images.factionImage" @change="images.customFaction = true"
-                  :aspectRatio="[69, 94]">
+                <el-button
+                  v-for="faction in factions"
+                  @click="useFaction(faction)"
+                  >{{ faction.value }}</el-button
+                >
+                <ImageCropper
+                  v-model:image="images.factionImage"
+                  @change="images.customFaction = true"
+                  :aspectRatio="[69, 94]"
+                >
                   上传图片
                 </ImageCropper>
               </el-button-group>
@@ -49,7 +74,11 @@
 
             <el-form-item label="品质">
               <el-button-group>
-                <el-button v-for="rarity in rarities" @click="form.rarity = rarity.key">{{ rarity.value }}</el-button>
+                <el-button
+                  v-for="rarity in rarities"
+                  @click="form.rarity = rarity.key"
+                  >{{ rarity.value }}</el-button
+                >
               </el-button-group>
             </el-form-item>
 
@@ -62,24 +91,45 @@
               </div>
               <div>
                 <span>水平偏移</span>
-                <el-input-number v-model="form.nameTransX" :precision="2" :step="0.1" />
+                <el-input-number
+                  v-model="form.nameTransX"
+                  :precision="2"
+                  :step="0.1"
+                />
               </div>
               <div>
                 <span>垂直偏移</span>
-                <el-input-number v-model="form.nameTransY" :precision="2" :step="0.1" />
+                <el-input-number
+                  v-model="form.nameTransY"
+                  :precision="2"
+                  :step="0.1"
+                />
               </div>
               <div>
                 <span>字符间距</span>
-                <el-input-number v-model="form.nameSpacing" :precision="2" :step="0.1" />
+                <el-input-number
+                  v-model="form.nameSpacing"
+                  :precision="2"
+                  :step="0.1"
+                />
               </div>
             </el-form-item>
 
-            <el-form-item v-for="(skill, index) in form.skills" :key="skill.id" :label="'技能' + (index + 1)"
-              :prop="'skills.' + index + '.value'">
+            <el-form-item
+              v-for="(skill, index) in form.skills"
+              :key="skill.id"
+              :label="'技能' + (index + 1)"
+              :prop="'skills.' + index + '.value'"
+            >
               <el-input v-model="skill.key" placeholder="技能名" />
-              <el-input v-model="skill.value" :autosize="{ minRows: 2 }" type="textarea" placeholder="技能描述"
-                @focus="focusSkillDescInput" />
-              <div style="width: 100%; display: flex; gap: 12px;">
+              <el-input
+                v-model="skill.value"
+                :autosize="{ minRows: 2 }"
+                type="textarea"
+                placeholder="技能描述"
+                @focus="focusSkillDescInput"
+              />
+              <div style="width: 100%; display: flex; gap: 12px">
                 <el-checkbox v-model="skill.isChild" label="衍生技" />
                 <div style="flex: 1"></div>
                 <el-button class="mt-2" @click.prevent="removeSkill(skill)">
@@ -95,21 +145,25 @@
                     <el-button>编辑帮助</el-button>
                   </template>
                   <el-button-group>
-                    <el-button @click="formatOrCopy(v, k)" v-for="(v, k) in {
-                      '♠': '♠',
-                      '♣': '♣',
-                      '♥': '♥',
-                      '♦': '♦',
-                      '☯': '☯',
-                      '粗体': '<b>粗体</b>',
-                      '斜体': '<i>斜体</i>',
-                      '下划线': '<u>下划线</u>',
-                      '缩小': '<small>缩小</small>',
-                      '橙色': '<span.orange>橙色</span>',
-                      '绿色': '<span.green>绿色</span>',
-                      '黄色': '<span.yellow>黄色</span>',
-                      '灰色': '<span.gray>灰色</span>'
-                    }" v-html="processText(v)"></el-button>
+                    <el-button
+                      @click="formatOrCopy(v, k)"
+                      v-for="(v, k) in {
+                        '♠': '♠',
+                        '♣': '♣',
+                        '♥': '♥',
+                        '♦': '♦',
+                        '☯': '☯',
+                        粗体: '<b>粗体</b>',
+                        斜体: '<i>斜体</i>',
+                        下划线: '<u>下划线</u>',
+                        缩小: '<small>缩小</small>',
+                        橙色: '<span.orange>橙色</span>',
+                        绿色: '<span.green>绿色</span>',
+                        黄色: '<span.yellow>黄色</span>',
+                        灰色: '<span.gray>灰色</span>',
+                      }"
+                      v-html="processText(v)"
+                    ></el-button>
                   </el-button-group>
                 </el-popover>
                 <el-button @click="copyInfo">复制文案</el-button>
@@ -117,16 +171,31 @@
             </el-form-item>
 
             <el-form-item label="顶部文字">
-              <el-input v-model="form.topLeftText" placeholder="左侧文字" clearable />
-              <el-input v-model="form.topRightText" placeholder="右侧文字" clearable />
+              <el-input
+                v-model="form.topLeftText"
+                placeholder="左侧文字"
+                clearable
+              />
+              <el-input
+                v-model="form.topRightText"
+                placeholder="右侧文字"
+                clearable
+              />
             </el-form-item>
 
             <el-form-item label="图片">
               <div class="button-row">
-                <ImageCropper type="primary" v-model:image="images.bgImage" :aspectRatio="[63, 88]">
+                <ImageCropper
+                  type="primary"
+                  v-model:image="images.bgImage"
+                  :aspectRatio="[63, 88]"
+                >
                   上传背景图
                 </ImageCropper>
-                <ImageCropper v-model:image="images.fgImage" :aspectRatio="[69, 94]">
+                <ImageCropper
+                  v-model:image="images.fgImage"
+                  :aspectRatio="[69, 94]"
+                >
                   上传前景图
                 </ImageCropper>
                 <el-button @click="images.fgImage = ''">清除前景图</el-button>
@@ -134,12 +203,21 @@
             </el-form-item>
 
             <el-form-item label="自定义CSS">
-              <el-input v-model="form.customCss" :autosize="{ minRows: 1, maxRows: 20 }" type="textarea" />
+              <el-input
+                v-model="form.customCss"
+                :autosize="{ minRows: 1, maxRows: 20 }"
+                type="textarea"
+              />
             </el-form-item>
 
             <el-form-item>
-              <div style="width: 100%; display: flex; gap: 12px;">
-                <el-button type="primary" @click="downloadCard" :loading="loading" style="flex: 1">
+              <div style="width: 100%; display: flex; gap: 12px">
+                <el-button
+                  type="primary"
+                  @click="downloadCard"
+                  :loading="loading"
+                  style="flex: 1"
+                >
                   下载图片
                 </el-button>
                 <el-button @click="resetForm">重置</el-button>
@@ -148,42 +226,91 @@
           </el-form>
           <template #footer>
             <el-space>
-              <el-link href="https://www.taptap.cn/moment/783350437376950702" target="_blank">问题反馈</el-link>
+              <el-link
+                href="https://www.taptap.cn/moment/783350437376950702"
+                target="_blank"
+                >问题反馈</el-link
+              >
               -
-              <el-link href="https://www.taptap.cn/user/757224223" target="_blank">制作器作者：Snownee</el-link>
+              <el-link
+                href="https://www.taptap.cn/user/757224223"
+                target="_blank"
+                >制作器作者：Snownee</el-link
+              >
               -
-              <el-link href="https://tieba.baidu.com/p/10477361730" target="_blank">模板制作：绛皓</el-link>
+              <el-link
+                href="https://tieba.baidu.com/p/10477361730"
+                target="_blank"
+                >模板制作：绛皓</el-link
+              >
             </el-space>
           </template>
         </el-card>
       </el-col>
 
-      <el-col :xs="24" :sm="8" class="preview-section" @click="fullscreenPreview = false">
+      <el-col
+        :xs="24"
+        :sm="8"
+        class="preview-section"
+        @click="fullscreenPreview = false"
+      >
         <component is="style">{{ form.customCss }}</component>
         <div ref="cardRef" class="card-preview">
-          <div id="card-bg" :style="{ backgroundImage: `url(${images.bgImage})` }"></div>
+          <div
+            id="card-bg"
+            :style="{ backgroundImage: `url(${images.bgImage})` }"
+          ></div>
           <div id="card-content">
             <div id="max-cards-bg"></div>
-            <div id="faction" :style="{ backgroundImage: `url(${images.factionImage})` }"></div>
-            <div id="rarity" :style="{ backgroundImage: `url(${rarityImage()})` }"></div>
-            <div class="name name2" :style="nameStyle" v-if="form.name.length == 2">{{ form.name || '姓名' }}</div>
-            <div class="name name3" :style="nameStyle" v-else>{{ form.name || '' }}</div>
-            <div id="max-cards">{{ form.maxCards || '0' }}</div>
+            <div
+              id="faction"
+              :style="{ backgroundImage: `url(${images.factionImage})` }"
+            ></div>
+            <div
+              id="rarity"
+              :style="{ backgroundImage: `url(${rarityImage()})` }"
+            ></div>
+            <div
+              class="name name2"
+              :style="nameStyle"
+              v-if="form.name.length == 2"
+            >
+              {{ form.name || "姓名" }}
+            </div>
+            <div class="name name3" :style="nameStyle" v-else>
+              {{ form.name || "" }}
+            </div>
+            <div id="max-cards">{{ form.maxCards || "0" }}</div>
             <div id="skills">
-              <div v-for="skill in form.skills" class="skill" :class="{ 'child-skill': skill.isChild }">
-                <div class="skill-name skill-dot" :data-text="skillDot(skill)">{{ skillDot(skill) }}&nbsp;&nbsp;</div>
-                <div class="skill-name" :data-text="skill.key">{{ skill.key }}</div>
+              <div
+                v-for="skill in form.skills"
+                class="skill"
+                :class="{ 'child-skill': skill.isChild }"
+              >
+                <div class="skill-name skill-dot" :data-text="skillDot(skill)">
+                  {{ skillDot(skill) }}&nbsp;&nbsp;
+                </div>
+                <div class="skill-name" :data-text="skill.key">
+                  {{ skill.key }}
+                </div>
                 <div class="skill-desc" v-html="processText(skill.value)"></div>
               </div>
             </div>
           </div>
           <div id="card-frame"></div>
-          <div id="card-fg" :style="{ backgroundImage: `url(${images.fgImage})` }">
+          <div
+            id="card-fg"
+            :style="{ backgroundImage: `url(${images.fgImage})` }"
+          >
             <div id="max-hp">
               <div class="hp-point" v-for="i in form.maxHP"></div>
             </div>
-            <div id="top-left-text" class="top-text">{{ form.topLeftText }}</div>
-            <div id="top-right-text" class="top-text">{{ form.topRightText }}</div>
+            <div id="top-left-text" class="top-text">
+              {{ form.topLeftText }}
+            </div>
+            <div id="top-right-text" class="top-text">
+              {{ form.topRightText }}
+            </div>
           </div>
         </div>
       </el-col>
@@ -192,40 +319,40 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue';
-import domtoimage from 'dom-to-image';
-import ImageCropper from './components/ImageCropper.vue';
-import jingke from '@/assets/ui_s1_yuanhua_jingke.webp'
-import yan from '@/assets/yan.webp'
-import { ElMessage } from 'element-plus';
-import { View } from '@element-plus/icons-vue'
-import { useElementVisibility } from './useElementVisibility';
-import { factions, rarities, defaultForm } from './data';
+import { ref, reactive, computed, watch, onMounted } from "vue";
+import domtoimage from "dom-to-image";
+import ImageCropper from "./components/ImageCropper.vue";
+import jingke from "@/assets/ui_s1_yuanhua_jingke.webp";
+import yan from "@/assets/yan.webp";
+import { ElMessage } from "element-plus";
+import { View } from "@element-plus/icons-vue";
+import { useElementVisibility } from "./useElementVisibility";
+import { factions, rarities, defaultForm } from "./data";
 
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
   return {
     color: `${form.nameColor}`,
-    'text-shadow': `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`,
-    'letter-spacing': `${form.nameSpacing - 2}cqw`,
-    'transform': `translate(${form.nameTransX}cqw, ${form.nameTransY}cqw)`
+    "text-shadow": `${form.nameShadow} 0.4cqw 0.5cqw 0.5cqw`,
+    "letter-spacing": `${form.nameSpacing - 2}cqw`,
+    transform: `translate(${form.nameTransX}cqw, ${form.nameTransY}cqw)`,
   };
 });
 const images = reactive({
   bgImage: jingke,
-  fgImage: '',
+  fgImage: "",
   factionImage: yan,
-  customFaction: false
-})
+  customFaction: false,
+});
 
-const missingFontDialogVisible = ref(false)
-const copyInfoDialogVisible = ref(false)
+const missingFontDialogVisible = ref(false);
+const copyInfoDialogVisible = ref(false);
 
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
-  let savedData = localStorage.getItem('mjs_diy_card_data');
+  let savedData = localStorage.getItem("mjs_diy_card_data");
   if (!savedData) {
-    savedData = localStorage.getItem('card_data');
+    savedData = localStorage.getItem("card_data");
   }
   if (savedData) {
     // 将字符串转回对象并赋值
@@ -233,10 +360,10 @@ onMounted(() => {
   }
 
   /**
- * 检查一组字体中是否有任意一个在用户系统中存在
- * @param {string[]} fonts - 字体名称数组，如 ['PingFang SC', 'Microsoft YaHei']
- * @returns {string|null} - 返回第一个找到的字体名，若都没找到则返回 null
- */
+   * 检查一组字体中是否有任意一个在用户系统中存在
+   * @param {string[]} fonts - 字体名称数组，如 ['PingFang SC', 'Microsoft YaHei']
+   * @returns {string|null} - 返回第一个找到的字体名，若都没找到则返回 null
+   */
   const checkFonts = (fonts) => {
     const testString = "mmmmmmmmmmlli";
     const testSize = "72px";
@@ -279,12 +406,7 @@ onMounted(() => {
   };
 
   missingFontDialogVisible.value =
-    !checkFonts([
-      "Kaiti SC",
-      "STKaiti",
-      "BiauKai",
-      "楷体",
-      "KaiTi"]) ||
+    !checkFonts(["Kaiti SC", "STKaiti", "BiauKai", "楷体", "KaiTi"]) ||
     !checkFonts([
       "Source Han Sans SC",
       "Source Han Sans CN",
@@ -292,119 +414,124 @@ onMounted(() => {
       "Microsoft YaHei",
       "Noto Sans CJK SC",
       "WenQuanYi Micro Hei",
-      "SimHei"])
+      "SimHei",
+    ]);
 });
 
 // 2. 数据变化时：实时写入本地
-watch(form, (newVal) => {
-  if (images !== null && !images.customFaction) {
-    images.factionImage = new URL(`./assets/${newVal.faction}.webp`, import.meta.url).href
-  }
-  localStorage.setItem('mjs_diy_card_data', JSON.stringify(newVal));
-}, { deep: true }); // deep: true 确保能监听到对象内部属性的变化
+watch(
+  form,
+  (newVal) => {
+    if (images !== null && !images.customFaction) {
+      images.factionImage = new URL(
+        `./assets/${newVal.faction}.webp`,
+        import.meta.url,
+      ).href;
+    }
+    localStorage.setItem("mjs_diy_card_data", JSON.stringify(newVal));
+  },
+  { deep: true },
+); // deep: true 确保能监听到对象内部属性的变化
 
 const resetForm = () => {
-  localStorage.removeItem('mjs_diy_card_data')
+  localStorage.removeItem("mjs_diy_card_data");
   Object.assign(form, defaultForm);
 
-  images.fgImage = ''
-}
+  images.fgImage = "";
+};
 
 const cardRef = ref(null);
 const loading = ref(false);
-const fullscreenPreview = ref(false)
-const canSeeCard = useElementVisibility('.preview-section');
-const lastSkillDescInput = ref(null)
+const fullscreenPreview = ref(false);
+const canSeeCard = useElementVisibility(".preview-section");
+const lastSkillDescInput = ref(null);
 
-const focusSkillDescInput = (e) => lastSkillDescInput.value = e.target
+const focusSkillDescInput = (e) => (lastSkillDescInput.value = e.target);
 
 const isForcedDarkMode = () => {
   // https://stackoverflow.com/questions/58646758/how-to-detect-darkmode-on-samsung-internet-browser
-  if (!navigator.userAgent.match(/Samsung/i))
-    return false;
-  const ctx = document.createElement('canvas').getContext('2d'), img = new Image();
-  img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+';
-  if (!img.complete)
-    img.dispatchEvent(new Event('load'));
+  if (!navigator.userAgent.match(/Samsung/i)) return false;
+  const ctx = document.createElement("canvas").getContext("2d"),
+    img = new Image();
+  img.src =
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IndoaXRlIi8+PC9zdmc+";
+  if (!img.complete) img.dispatchEvent(new Event("load"));
   ctx.drawImage(img, 0, 0);
   const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
   return (r & b & g) < 255;
-}
+};
 
 const downloadCard = async () => {
   if (!cardRef.value) return;
   if (isForcedDarkMode()) {
-    ElMessage.primary('请先关闭浏览器的深色模式')
+    ElMessage.primary("请先关闭浏览器的深色模式");
     return;
   }
 
   loading.value = true; // 点击按钮，开启加载动画
   try {
-    cardRef.value.classList.add('card-preview-rendering');
-    const image = await domtoimage.toPng(cardRef.value)
-    var link = document.createElement('a');
-    link.download = `${form.name || 'mjs-card'}.png`;
+    cardRef.value.classList.add("card-preview-rendering");
+    const image = await domtoimage.toPng(cardRef.value);
+    var link = document.createElement("a");
+    link.download = `${form.name || "mjs-card"}.png`;
     link.href = image;
     link.click();
   } finally {
     loading.value = false; // 无论成功还是失败，最后都要关闭加载动画
-    cardRef.value.classList.remove('card-preview-rendering');
+    cardRef.value.classList.remove("card-preview-rendering");
   }
 };
 
 const removeSkill = (item) => {
-  const index = form.skills.indexOf(item)
+  const index = form.skills.indexOf(item);
   if (index !== -1) {
-    form.skills.splice(index, 1)
+    form.skills.splice(index, 1);
   }
-}
+};
 
 const addSkill = () => {
   form.skills.push({
     id: Date.now(),
-    key: '',
-    value: '',
+    key: "",
+    value: "",
     isChild: false,
-  })
-}
+  });
+};
 
 const useFaction = (faction) => {
-  form.faction = faction.key
+  form.faction = faction.key;
   if (faction.black) {
-    form.nameColor = '#000000'
-    form.nameShadow = '#ffffff'
+    form.nameColor = "#000000";
+    form.nameShadow = "#ffffff";
   } else {
-    form.nameColor = '#ffffff'
-    form.nameShadow = '#000000'
+    form.nameColor = "#ffffff";
+    form.nameShadow = "#000000";
   }
-  images.customFaction = false
-}
+  images.customFaction = false;
+};
 
 const rarityImage = () => {
-  const rarity = form.rarity
-  if (rarity && rarity !== '') {
-    return new URL(`./assets/${rarity}.webp`, import.meta.url).href
+  const rarity = form.rarity;
+  if (rarity && rarity !== "") {
+    return new URL(`./assets/${rarity}.webp`, import.meta.url).href;
   }
-  return ''
-}
+  return "";
+};
 
 const formatOrCopy = (v, k) => {
   const textarea = lastSkillDescInput.value;
   let success = false;
   if (textarea && textarea.isConnected) {
-
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const originalText = textarea.value;
 
     if (k === v) {
       textarea.value =
-        originalText.substring(0, start) +
-        k +
-        originalText.substring(end);
+        originalText.substring(0, start) + k + originalText.substring(end);
       // 补偿逻辑：替换后将焦点还给 textarea，方便用户继续编辑
       textarea.setSelectionRange(start + k.length, start + k.length);
-      success = true
+      success = true;
     } else {
       // 只有当有文字被选中时才执行
       if (start !== end) {
@@ -421,70 +548,72 @@ const formatOrCopy = (v, k) => {
 
         // 补偿逻辑：替换后将焦点还给 textarea，方便用户继续编辑
         textarea.setSelectionRange(start, start + newSelectedText.length);
-        success = true
+        success = true;
       }
     }
   }
   if (success) {
     textarea.focus();
     // 触发reactive更新
-    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    textarea.dispatchEvent(new Event("input", { bubbles: true }));
   } else {
-    navigator.clipboard.writeText(v).then(_ => ElMessage.success('已复制'))
+    navigator.clipboard.writeText(v).then((_) => ElMessage.success("已复制"));
   }
-}
+};
 
 const processText = (s) => {
-  s = s.replaceAll('\n', '<br/>')
-  s = s.replaceAll(' ', '&nbsp;')
-  s = s.replaceAll(`<span.`, `<span class=`)
+  s = s.replaceAll("\n", "<br/>");
+  s = s.replaceAll(" ", "&nbsp;");
+  s = s.replaceAll(`<span.`, `<span class=`);
   for (const [k, v] of Object.entries({
-    '♠': 'spades',
-    '♣': 'clubs',
-    '♥': 'hearts',
-    '♦': 'diams',
-    '☯': 'yinyang'
+    "♠": "spades",
+    "♣": "clubs",
+    "♥": "hearts",
+    "♦": "diams",
+    "☯": "yinyang",
   })) {
-    s = s.replaceAll(k, `<span class="${v}">${k}</span>`)
-    s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`)
+    s = s.replaceAll(k, `<span class="${v}">${k}</span>`);
+    s = s.replaceAll(`&${v};`, `<span class="${v}">${k}</span>`);
   }
-  return s
-}
+  return s;
+};
 
 const skillDot = (skill) => {
-  return skill.isChild ? '●' : '◆'
-}
+  return skill.isChild ? "●" : "◆";
+};
 
-const infoInput = ref('')
+const infoInput = ref("");
 
 const copyInfo = () => {
   const stripHtml = (html) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
-  }
+  };
 
-  let faction = form.faction
+  let faction = form.faction;
   for (const data of factions) {
     if (faction === data.key) {
-      faction = data.value
-      break
+      faction = data.value;
+      break;
     }
   }
-  let s = `${form.name} ${form.maxCards}手牌 ${form.maxHP}体力上限 ${faction}`
+  let s = `${form.name} ${form.maxCards}手牌 ${form.maxHP}体力上限 ${faction}`;
   for (const skill of form.skills) {
     s += `
-【${skill.key}】${skill.isChild ? '（衍生技）' : ''}
-${stripHtml(skill.value)}`
+【${skill.key}】${skill.isChild ? "（衍生技）" : ""}
+${stripHtml(skill.value)}`;
   }
 
-  infoInput.value = s
-  copyInfoDialogVisible.value = true
-}
+  infoInput.value = s;
+  copyInfoDialogVisible.value = true;
+};
 
 const copyInfoAndClose = () => {
-  navigator.clipboard.writeText(infoInput.value).then(_ => ElMessage.success('已复制'))
-  copyInfoDialogVisible.value = false
-}
+  navigator.clipboard
+    .writeText(infoInput.value)
+    .then((_) => ElMessage.success("已复制"));
+  copyInfoDialogVisible.value = false;
+};
 </script>
 
 <style scoped>
@@ -521,7 +650,7 @@ const copyInfoAndClose = () => {
   display: none;
 }
 
-.card-preview>div {
+.card-preview > div {
   position: absolute;
   top: 0;
   left: 0;
@@ -560,8 +689,8 @@ const copyInfoAndClose = () => {
   background-repeat: no-repeat;
 }
 
-#card-fg>*,
-#card-content>* {
+#card-fg > *,
+#card-content > * {
   position: relative;
 }
 
@@ -640,7 +769,12 @@ const copyInfoAndClose = () => {
   padding: 0.5cqw;
   margin-top: 0.6cqw;
   /* 增加了透明度：从上往下深灰到中灰，rgba(r,g,b,0.7) */
-  background: linear-gradient(to bottom, rgba(74, 74, 74, 0.5) 0%, rgba(117, 117, 117, 0.5) 30%, rgba(109, 109, 109, 0.5) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(74, 74, 74, 0.5) 0%,
+    rgba(117, 117, 117, 0.5) 30%,
+    rgba(109, 109, 109, 0.5) 100%
+  );
   border: 0.4cqw solid #9994;
   /* 外部投影，增加浮起感 */
   box-shadow: 0 0 2cqw rgba(0, 0, 0, 0.5);
@@ -656,10 +790,15 @@ const copyInfoAndClose = () => {
 .skill-dot::before {
   position: absolute;
   display: block;
-  content: '';
+  content: "";
   width: 45cqw;
   height: 3cqw;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.6) 40%,
+    rgba(0, 0, 0, 0) 100%
+  );
   transform: translate(-1.1cqw, -0.8cqw);
 }
 
@@ -726,15 +865,13 @@ const copyInfoAndClose = () => {
   font-weight: 300;
   font-family:
     /* 1. 优先调用本地思源黑体 */
-    "Source Han Sans SC", "Source Han Sans CN",
-    /* 2. macOS / iOS 替代 */
-    "PingFang SC",
-    /* 3. Windows 替代 */
-    "Microsoft YaHei",
-    /* 4. Linux / Android 替代 */
-    "Noto Sans CJK SC", "WenQuanYi Micro Hei",
-    /* 5. 兜底方案 */
-    sans-serif;
+    "Source Han Sans SC",
+    "Source Han Sans CN",
+    /* 2. macOS / iOS 替代 */ "PingFang SC",
+    /* 3. Windows 替代 */ "Microsoft YaHei",
+    /* 4. Linux / Android 替代 */ "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei",
+    /* 5. 兜底方案 */ sans-serif;
   font-weight: normal;
 }
 
@@ -765,15 +902,13 @@ const copyInfoAndClose = () => {
   font-weight: bold;
   font-family:
     /* 1. 优先调用本地思源黑体 */
-    "Source Han Sans SC", "Source Han Sans CN",
-    /* 2. macOS / iOS 替代 */
-    "PingFang SC",
-    /* 3. Windows 替代 */
-    "Microsoft YaHei",
-    /* 4. Linux / Android 替代 */
-    "Noto Sans CJK SC", "WenQuanYi Micro Hei",
-    /* 5. 兜底方案 */
-    sans-serif;
+    "Source Han Sans SC",
+    "Source Han Sans CN",
+    /* 2. macOS / iOS 替代 */ "PingFang SC",
+    /* 3. Windows 替代 */ "Microsoft YaHei",
+    /* 4. Linux / Android 替代 */ "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei",
+    /* 5. 兜底方案 */ sans-serif;
   position: absolute;
   top: 5.7cqw;
   white-space: nowrap;
@@ -807,7 +942,7 @@ const copyInfoAndClose = () => {
   align-items: center;
 }
 
-.button-row>* {
+.button-row > * {
   margin: 0;
 }
 
