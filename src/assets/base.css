@@ -43,3 +43,16 @@ body {
   flex-wrap: nowrap;
   gap: 3px;
 }
+
+.skill-bg-opacity .el-form-item__label {
+  max-width: 5em;
+  line-height: 1.1;
+}
+
+.form-section .el-card__footer .el-space__item {
+  white-space: nowrap;
+}
+
+.form-section .el-card__footer .el-space {
+  flex-wrap: wrap;
+}
