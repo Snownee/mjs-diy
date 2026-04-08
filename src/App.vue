@@ -223,7 +223,7 @@ const copyInfoDialogVisible = ref(false)
 
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
-  const savedData = localStorage.getItem('mjs_diy_card_data');
+  let savedData = localStorage.getItem('mjs_diy_card_data');
   if (!savedData) {
     savedData = localStorage.getItem('card_data');
   }
