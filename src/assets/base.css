@@ -28,3 +28,12 @@ body {
     display: none;
   }
 }
+
+.taptap {
+  margin-top: 90px;
+  margin-bottom: 90px;
+}
+
+.taptap .el-message {
+  transform: translate(-50%, 100px) !important;
+}

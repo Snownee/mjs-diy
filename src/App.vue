@@ -347,9 +347,13 @@ const images = reactive({
 
 const missingFontDialogVisible = ref(false);
 const copyInfoDialogVisible = ref(false);
+const taptap = window.location.hostname.includes("tap");
 
 // 1. 页面加载时：从本地读取数据
 onMounted(() => {
+  if (taptap) {
+    document.body.classList.add("taptap");
+  }
   let savedData = localStorage.getItem("mjs_diy_card_data");
   if (!savedData) {
     savedData = localStorage.getItem("card_data");
