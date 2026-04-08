@@ -170,6 +170,16 @@
               </div>
             </el-form-item>
 
+            <el-form-item label="技能背景不透明度" class="skill-bg-opacity">
+              <el-slider
+                v-model="form.skillBgOpacity"
+                :min="0"
+                :max="1"
+                :step="0.02"
+              />
+              <el-button @click="form.skillBgOpacity = 0.5"> 重置 </el-button>
+            </el-form-item>
+
             <el-form-item label="顶部文字">
               <el-input
                 v-model="form.topLeftText"
@@ -243,6 +253,8 @@
                 target="_blank"
                 >模板制作：绛皓</el-link
               >
+              -
+              <el-link href="#" @click.prevent="clickDIYGroup">DIY交流</el-link>
             </el-space>
           </template>
         </el-card>
@@ -286,6 +298,9 @@
                 v-for="skill in form.skills"
                 class="skill"
                 :class="{ 'child-skill': skill.isChild }"
+                :style="{
+                  background: `linear-gradient(to bottom, rgba(74, 74, 74, ${form.skillBgOpacity}) 0%, rgba(117, 117, 117, ${form.skillBgOpacity}) 30%, rgba(109, 109, 109, ${form.skillBgOpacity}) 100%)`,
+                }"
               >
                 <div class="skill-name skill-dot" :data-text="skillDot(skill)">
                   {{ skillDot(skill) }}&nbsp;&nbsp;
@@ -324,11 +339,12 @@ import domtoimage from "dom-to-image";
 import ImageCropper from "./components/ImageCropper.vue";
 import jingke from "@/assets/ui_s1_yuanhua_jingke.webp";
 import yan from "@/assets/yan.webp";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { View } from "@element-plus/icons-vue";
 import { useElementVisibility } from "./useElementVisibility";
 import { factions, rarities, defaultForm } from "./data";
 import { initSaveImageListener, saveLargeBase64Image } from "./taptap";
+import { el } from "element-plus/es/locale/index.mjs";
 
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
@@ -369,8 +385,13 @@ onMounted(() => {
     savedData = localStorage.getItem("card_data");
   }
   if (savedData) {
+    savedData = JSON.parse(savedData);
+    if (savedData.skillBgOpacity === undefined) {
+      // 兼容旧数据，默认技能背景不透明度为 0.5
+      savedData.skillBgOpacity = 0.5;
+    }
     // 将字符串转回对象并赋值
-    Object.assign(form, JSON.parse(savedData));
+    Object.assign(form, savedData);
   }
 
   /**
@@ -632,6 +653,15 @@ const copyInfoAndClose = () => {
     .then((_) => ElMessage.success("已复制"));
   copyInfoDialogVisible.value = false;
 };
+
+const clickDIYGroup = () => {
+  ElMessageBox.confirm("1013827212", "DIY交流", {
+    confirmButtonText: "复制",
+    callback: () => {
+      navigator.clipboard.writeText("1013827212");
+    },
+  });
+};
 </script>
 
 <style scoped>
@@ -786,7 +816,7 @@ const copyInfoAndClose = () => {
   line-height: 1.1;
   padding: 0.5cqw;
   margin-top: 0.6cqw;
-  /* 增加了透明度：从上往下深灰到中灰，rgba(r,g,b,0.7) */
+  /* 增加了透明度：从上往下深灰到中灰，rgba(r,g,b,0.5) */
   background: linear-gradient(
     to bottom,
     rgba(74, 74, 74, 0.5) 0%,

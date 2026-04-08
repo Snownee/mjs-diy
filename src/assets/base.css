@@ -37,3 +37,9 @@ body {
 .taptap .el-message {
   transform: translate(-50%, 100px) !important;
 }
+
+.skill-bg-opacity .el-form-item__content {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 3px;
+}

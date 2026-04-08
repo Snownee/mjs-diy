@@ -138,4 +138,5 @@ export const defaultForm = {
   nameTransX: 0,
   nameTransY: 0,
   customCss: "",
+  skillBgOpacity: 0.5,
 };
