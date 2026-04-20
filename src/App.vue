@@ -344,7 +344,6 @@ import { View } from "@element-plus/icons-vue";
 import { useElementVisibility } from "./useElementVisibility";
 import { factions, rarities, defaultForm } from "./data";
 import { initSaveImageListener, saveLargeBase64Image } from "./taptap";
-import { el } from "element-plus/es/locale/index.mjs";
 
 const form = reactive(structuredClone(defaultForm));
 const nameStyle = computed(() => {
@@ -371,14 +370,14 @@ let taptapWebView = false;
 onMounted(() => {
   if (taptap) {
     document.body.classList.add("taptap");
-    // if (window.urlResource?.TapTapAPI) {
-    //   try {
-    //     initSaveImageListener();
-    //     taptapWebView = true;
-    //   } catch (e) {
-    //     console.error("初始化 TapTap 图片保存监听器失败", e);
-    //   }
-    // }
+    if (window.urlResource?.TapTapAPI) {
+      try {
+        initSaveImageListener();
+        taptapWebView = true;
+      } catch (e) {
+        console.error("初始化 TapTap 图片保存监听器失败", e);
+      }
+    }
   }
   let savedData = localStorage.getItem("mjs_diy_card_data");
   if (!savedData) {
@@ -508,7 +507,14 @@ const downloadCard = async () => {
     cardRef.value.classList.add("card-preview-rendering");
     const image = await domtoimage.toPng(cardRef.value);
     if (taptapWebView) {
-      await saveLargeBase64Image(image, true);
+      await saveLargeBase64Image(image)
+        .then(() => {
+          ElMessage.success("图片已保存到相册");
+        })
+        .catch((e) => {
+          console.error("保存图片失败", e);
+          ElMessage.error("保存图片失败：" + e.message);
+        });
     } else {
       var link = document.createElement("a");
       link.download = `${form.name || "mjs-card"}.png`;

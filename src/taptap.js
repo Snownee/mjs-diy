@@ -35,7 +35,7 @@ export function initSaveImageListener() {
   }
 
   // 监听客户端保存结果回调
-  window.webviewOn('notifyImageSaveStatusChanged', (callbackParams) => {
+  window.webviewOn("notifyImageSaveStatusChanged", (callbackParams) => {
     const result = JSON.parse(callbackParams);
     // result 结构:
     // {
@@ -52,34 +52,44 @@ export function initSaveImageListener() {
 }
 
 function generateImageId() {
-  // 生成 12 位唯一 ID，可用 uuid 截取或其他方式
-  return Math.random().toString(36).slice(-12);
+  return (
+    Date.now().toString(36) + Math.random().toString(36).slice(2, 10)
+  ).slice(-12);
 }
 
-export async function saveLargeBase64Image(base64Str, saveAlbum = false) {
+function stripDataUrlPrefix(base64) {
+  const idx = base64.indexOf("base64,");
+  return idx >= 0 ? base64.slice(idx + 7) : base64;
+}
+
+export function saveLargeBase64Image(
+  base64Str,
+  { saveAlbum = true, mimeType = "image/png", chunkSize = 500 * 1024 } = {},
+) {
+  if (typeof window.TapTapAPI !== "function") {
+    return Promise.reject(
+      new Error("window.TapTapAPI 不存在（非 TapTap WebView 环境）"),
+    );
+  }
+
+  const pure = stripDataUrlPrefix(base64Str);
+  const imageId = generateImageId();
+  const totalChunks = Math.max(1, Math.ceil(pure.length / chunkSize));
+
   return new Promise((resolve) => {
-    const imageId = generateImageId();
-    
-    // 2. 设定每片大小（比如每片 500KB 的字符长度）
-    const chunkSize = 500 * 1024; 
-    const totalChunks = Math.ceil(base64Str.length / chunkSize);
-
-    // 3. 循环发送分片
-    for (let i = 0; i < totalChunks; i++) {
-      const start = i * chunkSize;
-      const end = start + chunkSize;
-      const chunk = base64Str.slice(start, end);
-
-      window.TapTapAPI('saveImage', {
-        imageId,
-        chunks: totalChunks,
-        chunkIndex: i,
-        base64Data: chunk,
-        saveAlbum,
-        mimeType: 'image/png', // 根据实际情况填写
-      });
-    }
-
     saveImageCallbackMap.set(imageId, resolve);
+    for (let i = 0; i < totalChunks; i++) {
+      window.TapTapAPI(
+        "saveImage",
+        JSON.stringify({
+          imageId,
+          chunks: totalChunks,
+          chunkIndex: i,
+          base64Data: pure.slice(i * chunkSize, (i + 1) * chunkSize),
+          saveAlbum,
+          mimeType,
+        }),
+      );
+    }
   });
 }
