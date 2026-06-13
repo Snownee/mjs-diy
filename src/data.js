@@ -70,6 +70,10 @@ export const factions = [
     value: "孙吴",
   },
   {
+    key: "xijin",
+    value: "西晋",
+  },
+  {
     key: "song",
     value: "宋",
   },
